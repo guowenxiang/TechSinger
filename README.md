@@ -10,7 +10,7 @@ Also, you can visit our [Demo Page](https://tech-singer.github.io/) to see the r
 
 ### Dependencies
 
-A suitable [conda](https://conda.io/) environment named `stylesinger` can be created
+A suitable [conda](https://conda.io/) environment named `techsinger` can be created
 and activated with:
 
 ```
@@ -24,25 +24,31 @@ conda activate techsinger
 ### Data Preparation 
 
 1. Prepare your own singing dataset or download [GTSinger](https://github.com/GTSinger/GTSinger).
-2. Put `metadata.json` (including ph, word, item_name, ph_durs, wav_fn, singer, ep_pitches, ep_notedurs, ep_types for each singing voice) and `phone_set.json` (all phonemes of your dictionary) in `data/processed/style` **(Note: we provide `metadata.json` and `phone_set.json` in GTSinger, but you need to change the wav_fn of each wav in `metadata.json` to your own absolute path)**.
-3. Set `processed_data_dir` (`data/processed/style`), `binary_data_dir`,`valid_prefixes` (list of parts of item names, like `["Chinese#ZH-Alto-1#Mixed_Voice_and_Falsetto#一次就好"]`), `test_prefixes` in the [config](./egs/techsinger.yaml).
+2. Put `metadata.json` (including ph, word, item_name, ph_durs, wav_fn, singer, ep_pitches, ep_notedurs, ep_types for each singing voice) and `phone_set.json` (all phonemes of your dictionary) in `data/processed/gtsinger` **(Note: we provide `metadata.json` and `phone_set.json` in GTSinger, but you need to change the wav_fn of each wav in `metadata.json` to your own absolute path)**.
+3. Set `processed_data_dir` (`data/processed/gtsinger`), `binary_data_dir`,`valid_prefixes` (list of parts of item names, like `["Chinese#ZH-Alto-1#Mixed_Voice_and_Falsetto#一次就好"]`), `test_prefixes` in the [config](./egs/techsinger.yaml).
 4. Preprocess Dataset: 
 
 ```bash
 export PYTHONPATH=.
-CUDA_VISIBLE_DEVICES=$GPU python data_gen/tts/bin/binarize.py --config egs/techsinger.yaml
+CUDA_VISIBLE_DEVICES=$GPU python data_gen/tts/bin/binarize.py --config singing/svs/config/binarizer/gtsinger.yaml
 ```
 
-### Training StyleSinger
+### Training TechSinger
 
 ```bash
-CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/techsinger.yaml  --exp_name TechSinger --reset
+# stage 1
+CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config singing/svs/config/svs/gtsinger/stage1.yaml --exp_name svs/gtsinger/stage1 --reset
+# stage 2
+CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config singing/svs/config/svs/gtsinger/stage2.yaml --exp_name svs/gtsinger/stage2 --reset
+
 ```
 
-### Inference using StyleSinger
+### Inference using TechSinger
 
 ```bash
-CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config egs/techsinger.yaml  --exp_name TechSinger --infer
+
+CUDA_VISIBLE_DEVICES=$GPU python tasks/run.py --config singing/svs/config/svs/gtsinger/stage2.yaml --exp_name svs/gtsinger/stage2 --infer
+
 ```
 
 ## Acknowledgements
